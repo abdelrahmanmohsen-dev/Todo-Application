@@ -6,30 +6,41 @@ import com.App.Todo.Application.Services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/Tasks")
+@Controller
+@RequestMapping("/")
 public class TaskController {
+
     @Autowired
     private TaskService taskService;
-    @Autowired
-    private TaskRepository taskRepository;
 
     @GetMapping
-    public ResponseEntity<String> getAllTasks(Model model) {
+    public String getAllTasks(Model model) {
         List<Task> tasks = taskService.getAllTasks();
         model.addAttribute("tasks", tasks);
-        return ResponseEntity.ok("Tasks");
+        return "tasks";
     }
+
     @PostMapping
-    public ResponseEntity<String> addTask(@RequestBody String title) {
+    public String addTask(@RequestParam String title) {
         taskService.addTask(title);
-        return ResponseEntity.status(HttpStatus.CREATED).body("redirect:/");
+        return "redirect:/";
     }
 
+    @GetMapping("/{id}/delete")
+    public String deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return "redirect:/";
+    }
 
+    @GetMapping("/{id}/toggle")
+    public String toggleTask(@PathVariable Long id){
+        taskService.toggleTask(id);
+        return "redirect:/";
+    }
 }
